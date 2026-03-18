@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arjun AI — Personal AI Agent for College Students</title>
+
+  <!-- SEO & Social sharing meta tags -->
+  <meta name="description" content="Arjun AI — your free personal AI agent for Indian college students. Chat, code, find jobs, manage finances, and more. Powered by Groq (free)."/>
+  <meta name="theme-color" content="#8b7eff"/>
+  <meta property="og:title"       content="Arjun AI — Personal AI Agent"/>
+  <meta property="og:description" content="Free AI agent for Indian college students — code, jobs, finance, mock interviews and more."/>
+  <meta property="og:type"        content="website"/>
+  <meta name="twitter:card"       content="summary"/>
+
+  <!-- Preconnect to external origins for faster loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://api.groq.com"/>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
+
+  <!-- Google Fonts — preload critical fonts -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
+
+  <!-- marked.js — production markdown parser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js" crossorigin="anonymous"></script>
+
+  <!-- highlight.js — syntax highlighting for 190+ languages -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" crossorigin="anonymous"></script>
+
+  <!-- Chart.js — render finance/progress charts from agent responses -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+
+  <!-- jsPDF — export plans, resumes, roadmaps as real PDF files -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
+  <!-- PWA manifest — lets users install Arjun AI as a phone/desktop app -->
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="Arjun AI"/>
+
+  <!--
+    CSS — three files, loaded in dependency order:
+      variables.css  — design tokens (colors, fonts, spacing)
+      layout.css     — app shell, sidebar, topbar, search bar
+      components.css — all UI components (pills, bubbles, modals, input, toast)
+  -->
+  <link rel="stylesheet" href="css/variables.css"/>
+  <link rel="stylesheet" href="css/layout.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+</head>
+<body>
+
+<!-- Animated gradient background (pure CSS, see layout.css) -->
+<div class="bg"></div>
+
+<div class="app" id="app">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+       ══════════════════════════════════════════ -->
+  <aside class="sb" id="sb">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <div class="logo-row">
+        <div class="logo-gem">🧠</div>
+        <div>
+          <div class="logo-name">Arjun AI</div>
+          <div class="logo-ver">v7.1 · final edition</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Profile Strip (click to open profile modal) -->
+    <div class="profile-strip" onclick="openM('profile-modal')" id="profile-strip">
+      <div class="profile-av" id="profile-av">?</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profile-name">Set up your profile</div>
+        <div class="profile-sub"  id="profile-sub">Click to personalize Arjun</div>
+      </div>
+      <button class="profile-edit" onclick="event.stopPropagation();openM('profile-modal')">✏️</button>
+    </div>
+
+    <div class="sb-scroll">
+
+      <!-- Chat Modes -->
+      <div class="sbs">
+        <div class="sbl"><span class="sbl-dot"></span>Chat Mode</div>
+        <div class="mode-row">
+          <button class="mpill on" onclick="setMode('chat',this)">💬 Chat</button>
+          <button class="mpill"    onclick="setMode('study',this)">📚 Study</button>
+          <button class="mpill"    onclick="setMode('career',this)">💼 Career</button>
+        </div>
+      </div>
+
+      <!--
+        Agent Tasks
+        Each agent has its own system prompt in js/config.js.
+        Click again to deactivate.
+      -->
+      <div class="sbs">
+        <div class="sbl"><span class="sbl-dot"></span>Agent Tasks</div>
+        <div class="agent-row">
+          <button class="agpill" onclick="toggleAgent('code',this)">💻 Code</button>
+          <button class="agpill" onclick="toggleAgent('jobs',this)">🎯 Jobs</button>
+          <button class="agpill" onclick="toggleAgent('plan',this)">📋 Plan</button>
+          <button class="agpill" onclick="toggleAgent('write',this)">✍️ Write</button>
+          <button class="agpill" onclick="toggleAgent('finance',this)">💰 Finance</button>
+        </div>
+        <div class="agent-row" style="margin-top:4px">
+          <button class="agpill" onclick="toggleAgent('hustle',this)">🚀 Hustle</button>
+          <button class="agpill" onclick="toggleAgent('health',this)">🧘 Health</button>
+          <button class="agpill" onclick="toggleAgent('debug',this)">🐛 Debug</button>
+          <button class="agpill" onclick="toggleAgent('mock',this)">🎤 Mock</button>
+          <button class="agpill" onclick="toggleAgent('social',this)">💬 Social</button>
+        </div>
+      </div>
+
+      <!-- localStorage usage bar -->
+      <div class="storage-row">
+        <span class="storage-lbl" id="storage-lbl">Storage: 0 KB</span>
+        <div class="storage-bar">
+          <div class="storage-fill" id="storage-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Conversation list -->
+      <div class="sbs">
+        <div class="sbl"><span class="sbl-dot"></span>Conversations</div>
+        <button class="new-btn" onclick="newChat()">
+          <div class="new-icon">+</div>New conversation
+        </button>
+        <div class="cl" id="clist"></div>
+      </div>
+
+      <!-- Quick Ask chips (dynamically rendered by js/app.js) -->
+      <div class="sbs">
+        <div class="sbl"><span class="sbl-dot"></span>Quick Ask</div>
+        <div class="chips" id="chiplist"></div>
+      </div>
+
+      <!-- Settings -->
+      <div class="sbs">
+        <div class="sbl"><span class="sbl-dot"></span>Settings</div>
+        <div class="setrow">
+          <span class="setlbl">Light mode</span>
+          <label class="tog"><input type="checkbox" id="s-theme" onchange="toggleTheme(this.checked)"><span class="tog-t"></span></label>
+        </div>
+        <div class="setrow">
+          <span class="setlbl">Stream responses</span>
+          <label class="tog"><input type="checkbox" id="ss" checked><span class="tog-t"></span></label>
+        </div>
+        <div class="setrow">
+          <span class="setlbl">Sound on reply</span>
+          <label class="tog"><input type="checkbox" id="sd"><span class="tog-t"></span></label>
+        </div>
+        <div class="setrow">
+          <span class="setlbl">Auto-scroll</span>
+          <label class="tog"><input type="checkbox" id="sa" checked><span class="tog-t"></span></label>
+        </div>
+        <div class="setrow">
+          <span class="setlbl">Font size</span>
+          <select class="sbsel" id="s-fs" onchange="setFontSize(this.value)">
+            <option value="13px">Small</option>
+            <option value="14px" selected>Medium</option>
+            <option value="15.5px">Large</option>
+          </select>
+        </div>
+        <div class="setrow">
+          <span class="setlbl">Max tokens</span>
+          <select class="sbsel" id="stok">
+            <option value="1024" selected>1024</option>
+            <option value="2048">2048</option>
+            <option value="4096">4096</option>
+          </select>
+        </div>
+        <div class="setrow" style="margin-top:4px">
+          <span class="setlbl">API Key</span>
+          <button onclick="removeKey()" style="font-size:10px;padding:3px 10px;border-radius:6px;background:transparent;border:1px solid var(--r2);color:var(--d);cursor:pointer;font-family:var(--font);transition:all .15s" onmouseover="this.style.borderColor='var(--err)';this.style.color='var(--err)'" onmouseout="this.style.borderColor='var(--r2)';this.style.color='var(--d)'">🗑 Remove</button>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts reference -->
+      <div class="sbs">
+        <div class="sbl"><span class="sbl-dot"></span>Shortcuts</div>
+        <div class="shortcuts">
+          <div class="sc-row"><span class="sc-desc">Focus input</span>    <span class="sc-key">Ctrl K</span></div>
+          <div class="sc-row"><span class="sc-desc">New chat</span>        <span class="sc-key">Ctrl N</span></div>
+          <div class="sc-row"><span class="sc-desc">Toggle sidebar</span>  <span class="sc-key">Ctrl B</span></div>
+          <div class="sc-row"><span class="sc-desc">Stop generation</span> <span class="sc-key">Esc</span></div>
+          <div class="sc-row"><span class="sc-desc">Search</span>          <span class="sc-key">Ctrl F</span></div>
+          <div class="sc-row"><span class="sc-desc">Paste image</span>     <span class="sc-key">Ctrl V</span></div>
+          <div class="sc-row"><span class="sc-desc">Code agent</span>      <span class="sc-key">Alt 1</span></div>
+          <div class="sc-row"><span class="sc-desc">Jobs agent</span>      <span class="sc-key">Alt 2</span></div>
+          <div class="sc-row"><span class="sc-desc">Finance agent</span>   <span class="sc-key">Alt 5</span></div>
+          <div class="sc-row"><span class="sc-desc">Debug agent</span>     <span class="sc-key">Alt 8</span></div>
+          <div class="sc-row"><span class="sc-desc">Mock interview</span>  <span class="sc-key">Alt 9</span></div>
+        </div>
+      </div>
+
+    </div><!-- /sb-scroll -->
+
+    <div class="sbfoot">
+      <button class="sbfbtn exp" onclick="exportChat()">⬇ Export</button>
+      <button class="sbfbtn"     onclick="clearAll()">🗑 Clear All</button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CHAT AREA
+       ══════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="tb-l">
+        <button class="sb-toggle" onclick="toggleSidebar()" title="Toggle sidebar (Ctrl+B)">☰</button>
+        <div class="live-pill">
+          <div class="ldot"></div>
+          <span id="ctitle">Arjun is ready</span>
+        </div>
+        <!-- Shows which agent is active -->
+        <div class="agent-badge" id="agent-badge" style="display:none">
+          <span id="agent-mode-lbl"></span>
+        </div>
+      </div>
+      <div class="tb-r">
+        <button class="tbtn" onclick="toggleSearch()" title="Ctrl+F">🔍</button>
+        <button class="tbtn" onclick="openM('summ')">📝 Summary</button>
+        <button class="tbtn" onclick="openM('imgm')">🖼 Image</button>
+        <button class="tbtn stop" id="stop-btn" style="display:none" onclick="stopGeneration()">⏹ Stop</button>
+        <button class="tbtn" id="install-btn" style="display:none" onclick="installPWA()" title="Install as app">📲 Install</button>
+        <div class="tok-pill" id="tokpill">0 tokens</div>
+      </div>
+    </div>
+
+    <!-- Search bar (hidden by default, Ctrl+F to show) -->
+    <div class="srchwrap" id="srchwrap">
+      <input class="srchin" id="srchin"
+        placeholder="Search messages… (Esc to close)"
+        oninput="doSearch(this.value)"
+        onkeydown="if(event.key==='Escape')toggleSearch()"/>
+    </div>
+
+    <!-- API Key warning banner (shown if key is cleared) -->
+    <div class="api-warn" id="api-warn">
+      ⚠️ <strong>Groq API key not set.</strong>
+      <button onclick="showKeySetup()" style="margin-left:8px;background:var(--err);border:none;color:white;padding:3px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:var(--font)">Set Key</button>
+    </div>
+
+    <!-- Messages (populated by js/app.js) -->
+    <div class="msgs" id="msgs" onscroll="onMsgsScroll()"></div>
+
+    <!-- Floating scroll-to-bottom button (appears when scrolled up) -->
+    <button class="scroll-fab" id="scroll-fab" onclick="scrollBot()" title="Scroll to bottom">↓</button>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <!-- Attached file chips -->
+      <div class="ftray" id="ftray"></div>
+      <!-- Suggestion pills (change with mode/agent) -->
+      <div class="sugg-row" id="sugg-row"></div>
+
+      <div class="inwrap" id="inwrap">
+        <div class="inbtns">
+          <button class="icbtn" id="micbtn" onclick="toggleVoice()" title="Voice input">🎙</button>
+          <label class="icbtn" title="Attach file (or drag & drop)" style="cursor:pointer">
+            📎
+            <input type="file" id="filein" style="display:none" multiple
+              accept=".txt,.py,.js,.ts,.html,.css,.json,.md,.csv,.java,.cpp,.c,.go,.rs"
+              onchange="handleFiles(this)"/>
+          </label>
+        </div>
+        <div class="infield">
+          <textarea id="ui" placeholder="Kuch bhi bolo yaar… 💬" rows="1"
+            onkeydown="onKey(event)" oninput="onInp(this)"></textarea>
+          <div class="charct" id="charct">0 / 4000</div>
+        </div>
+        <button class="sndbtn" id="sndbtn" onclick="send()">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+        </button>
+      </div>
+      <div class="inhint">Enter · Shift+Enter new line · Ctrl+K focus · Ctrl+N new chat · Ctrl+B sidebar · Esc stop · Drag & drop files</div>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODALS
+     All modal state managed in js/app.js via openM() / closeM()
+     ══════════════════════════════════════════ -->
+
+<!-- Profile Setup Modal -->
+<div class="overlay" id="profile-modal">
+  <div class="modal">
+    <div class="modal-ttl">👤 Your Profile <button class="modal-x" onclick="closeM('profile-modal')">×</button></div>
+    <p style="font-size:12.5px;color:var(--s);margin-bottom:12px">
+      Arjun uses this to personalize every response. Your name, year, goal and city are stored locally only.
+    </p>
+    <input class="modal-in" id="p-name" placeholder="Your name (e.g. Rahul)"/>
+    <input class="modal-in" id="p-year" placeholder="Year &amp; Branch (e.g. 3rd year, CSE)"/>
+    <input class="modal-in" id="p-goal" placeholder="Your main goal (e.g. Get into Google, crack GATE)"/>
+    <input class="modal-in" id="p-city" placeholder="Your city (e.g. Ahmedabad)"/>
+    <div class="modal-row">
+      <button class="modal-cta" onclick="saveProfile()">💾 Save Profile</button>
+      <button class="modal-ghost" onclick="closeM('profile-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Chat Modal -->
+<div class="overlay" id="rename-modal">
+  <div class="modal">
+    <div class="modal-ttl">✏️ Rename Chat <button class="modal-x" onclick="closeM('rename-modal')">×</button></div>
+    <input class="modal-in" id="rename-in" placeholder="Chat name…" onkeydown="if(event.key==='Enter')doRename()"/>
+    <div class="modal-row">
+      <button class="modal-cta" onclick="doRename()">Rename</button>
+      <button class="modal-ghost" onclick="closeM('rename-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Conversation Summary Modal -->
+<div class="overlay" id="summ">
+  <div class="modal">
+    <div class="modal-ttl">📝 Chat Summary <button class="modal-x" onclick="closeM('summ')">×</button></div>
+    <div class="modal-body" id="sumbody">Click Generate to summarize this conversation.</div>
+    <div class="modal-row">
+      <button class="modal-cta" onclick="genSummary()">✨ Generate</button>
+      <button class="modal-ghost" onclick="navigator.clipboard.writeText(document.getElementById('sumbody').innerText).then(()=>toast('Copied!','ok'))">Copy</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Analysis Modal -->
+<div class="overlay" id="imgm">
+  <div class="modal">
+    <div class="modal-ttl">🖼 Analyze Image <button class="modal-x" onclick="closeM('imgm')">×</button></div>
+    <div class="imgdrop" id="imgdrop" onclick="document.getElementById('imgfile').click()">
+      <div style="font-size:28px">🖼</div>
+      <div style="font-size:13px;color:var(--s)">Click or paste (Ctrl+V) to upload</div>
+      <div style="font-size:11px;color:var(--d)">JPG · PNG · GIF · WEBP</div>
+    </div>
+    <input type="file" id="imgfile" accept="image/*" style="display:none" onchange="previewImg(this)"/>
+    <textarea class="modal-ta" id="imgq" placeholder="What to analyze? e.g. 'Explain this diagram', 'Find the bug in this screenshot'"></textarea>
+    <div class="modal-row">
+      <button class="modal-cta" onclick="analyzeImg()">🔍 Analyze with Arjun</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!--
+  JavaScript is split into four files loaded in dependency order:
+    config.js   — API key, constants, system prompts, chips, suggestions
+    storage.js  — localStorage operations, migration, profile, preferences
+    api.js      — Anthropic API fetch calls (stream + normal + summary)
+    app.js      — All UI logic, state management, rendering, agent cards
+-->
+
+<!-- ══════════════════════════════════════════
+     API KEY ONBOARDING SCREEN
+     Shows on first visit. Key saved to localStorage only — never in code.
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="key-setup" style="z-index:200">
+  <div class="modal" style="max-width:420px">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:36px;margin-bottom:10px">🧠</div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:-.4px;background:linear-gradient(110deg,var(--vl),var(--cl));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Welcome to Arjun AI</div>
+      <div style="font-size:13px;color:var(--s);margin-top:6px;line-height:1.6">Your personal AI agent for college life.<br/>Uses <strong style="color:var(--cl)">Groq API — 100% Free</strong>, no credit card needed.</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div style="background:var(--g2);border:1px solid var(--r);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12.5px;line-height:1.7;color:var(--s)">
+      <div style="font-weight:600;color:var(--t);margin-bottom:4px">Step 1 — Get your free Groq key</div>
+      1. Go to <a href="https://console.groq.com" target="_blank" style="color:var(--vl);font-weight:600">console.groq.com</a><br/>
+      2. Sign up free (Google login works)<br/>
+      3. Click <strong style="color:var(--t)">API Keys</strong> → <strong style="color:var(--t)">Create API Key</strong><br/>
+      4. Copy the key (starts with <code style="font-size:11px">gsk_...</code>)
+    </div>
+
+    <!-- Step 2 -->
+    <div style="font-weight:600;color:var(--t);font-size:12.5px;margin-bottom:6px">Step 2 — Paste your key here</div>
+    <input class="modal-in" id="key-input" type="password"
+      placeholder="gsk_..."
+      onkeydown="if(event.key==='Enter')saveKey()"
+      style="font-family:var(--mono);font-size:12px;letter-spacing:.03em"/>
+
+    <div style="font-size:11px;color:var(--d);margin:8px 0 14px;line-height:1.6">
+      🔒 Saved <strong style="color:var(--s)">only in your browser</strong> — never sent anywhere except Groq directly.
+    </div>
+
+    <button class="modal-cta" onclick="saveKey()" style="margin-top:0">
+      🚀 Start using Arjun AI — Free!
+    </button>
+
+    <details style="margin-top:14px;font-size:12px;color:var(--d)">
+      <summary style="cursor:pointer;color:var(--s);list-style:none">▶ Is this really free? Is it safe?</summary>
+      <div style="margin-top:8px;line-height:1.7;color:var(--d)">
+        <strong style="color:var(--s)">Yes, completely free.</strong> Groq gives you free API access to Llama 3 — 30 requests/minute, 14,400 requests/day. No credit card ever needed.<br/><br/>
+        <strong style="color:var(--s)">Your key stays in your browser.</strong> It is saved using <code style="font-size:10.5px">localStorage</code> on your own computer. It is never uploaded to any server — your browser calls Groq directly.<br/><br/>
+        <strong style="color:var(--s)">To remove your key:</strong> Settings in the sidebar → API Key → 🗑 Remove.
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SERVER HELP MODAL
+     Shown when user opens via file:// protocol
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="server-help">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-ttl">⚠️ One small fix needed <button class="modal-x" onclick="closeM('server-help')">×</button></div>
+
+    <p style="font-size:13px;color:var(--s);margin-bottom:14px;line-height:1.7">
+      You opened the app by double-clicking the file. Browsers block API calls when opened this way for security reasons.<br/><br/>
+      <strong style="color:var(--t)">Fix: open it through a local server instead.</strong> Takes 30 seconds:
+    </p>
+
+    <!-- Option A — Python (easiest) -->
+    <div style="background:var(--g2);border:1px solid var(--r);border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--cl);margin-bottom:8px">Option A — Python (recommended)</div>
+      <div style="font-size:12px;color:var(--s);margin-bottom:8px">Open terminal inside the <code style="font-size:11px">arjun-ai</code> folder, then run:</div>
+      <code style="display:block;background:rgba(0,0,0,.35);border-radius:7px;padding:9px 12px;font-size:12px;color:#c4c6e8;letter-spacing:.02em">python3 -m http.server 3000</code>
+      <div style="font-size:11.5px;color:var(--d);margin-top:8px">Then open <a href="http://localhost:3000" target="_blank" style="color:var(--vl)">http://localhost:3000</a> in your browser</div>
+    </div>
+
+    <!-- Option B — Windows double-click -->
+    <div style="background:var(--g2);border:1px solid var(--r);border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--cl);margin-bottom:8px">Option B — Windows (double-click)</div>
+      <div style="font-size:12px;color:var(--s)">Double-click <strong style="color:var(--t)">START.bat</strong> inside the arjun-ai folder.<br/>It starts the server and opens the browser automatically.</div>
+    </div>
+
+    <!-- Option C — VS Code -->
+    <div style="background:var(--g2);border:1px solid var(--r);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--cl);margin-bottom:8px">Option C — VS Code (easiest for developers)</div>
+      <div style="font-size:12px;color:var(--s)">
+        1. Install <strong style="color:var(--t)">Live Server</strong> extension in VS Code<br/>
+        2. Right-click <strong style="color:var(--t)">index.html</strong> → <strong style="color:var(--t)">Open with Live Server</strong><br/>
+        3. Done — auto-reloads when you edit files too
+      </div>
+    </div>
+
+    <div style="font-size:11.5px;color:var(--d);text-align:center;line-height:1.6">
+      Or deploy to <strong style="color:var(--s)">GitHub Pages</strong> (always works, no local setup) — see README.md
+    </div>
+
+    <div class="modal-row" style="margin-top:14px">
+      <button class="modal-cta" onclick="closeM('server-help')">Got it!</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

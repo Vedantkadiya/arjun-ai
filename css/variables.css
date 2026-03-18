@@ -1,0 +1,65 @@
+/* ============================================================
+   variables.css
+   Design tokens — all colors, fonts, spacing, shadows.
+   Change values here to retheme the entire app at once.
+   ============================================================ */
+
+:root {
+  /* Background layers */
+  --ink:   #07080f;
+  --panel: rgba(13, 14, 26, 0.93);
+
+  /* Glass surfaces (used for cards, inputs, sidebars) */
+  --g:  rgba(255, 255, 255, 0.035);
+  --g2: rgba(255, 255, 255, 0.065);
+  --g3: rgba(255, 255, 255, 0.10);
+
+  /* Borders / rims */
+  --r:  rgba(255, 255, 255, 0.07);
+  --r2: rgba(255, 255, 255, 0.13);
+  --r3: rgba(255, 255, 255, 0.20);
+
+  /* Text */
+  --t: #ecedf6;   /* primary text */
+  --s: #8a8ca8;   /* secondary / muted */
+  --d: #3e4058;   /* disabled / dim */
+
+  /* Accent colors */
+  --v:  #8b7eff;  /* violet — primary accent */
+  --vl: #b0a4ff;  /* violet light */
+  --vd: #5e4fd4;  /* violet dark */
+  --c:  #44d4be;  /* cyan — secondary accent */
+  --cl: #72e8d6;  /* cyan light */
+
+  /* Semantic colors */
+  --ok:   #4ade80;
+  --warn: #fbbf24;
+  --err:  #f87171;
+
+  /* Typography */
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  /* Glow shadow (violet) */
+  --gv: 0 0 28px rgba(139, 126, 255, 0.22);
+
+  /* User preferences (overridden by JS) */
+  --fs:   14px;    /* font size */
+  --sb-w: 290px;   /* sidebar width */
+}
+
+/* ── Light theme overrides ── */
+body.light {
+  --ink:   #f0f1f8;
+  --panel: rgba(255, 255, 255, 0.94);
+  --g:  rgba(0, 0, 0, 0.03);
+  --g2: rgba(0, 0, 0, 0.055);
+  --g3: rgba(0, 0, 0, 0.09);
+  --r:  rgba(0, 0, 0, 0.08);
+  --r2: rgba(0, 0, 0, 0.14);
+  --r3: rgba(0, 0, 0, 0.22);
+  --t: #141520;
+  --s: #555772;
+  --d: #9a9cb5;
+  --gv: 0 0 28px rgba(139, 126, 255, 0.15);
+}
