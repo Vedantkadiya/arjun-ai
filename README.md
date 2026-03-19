@@ -193,22 +193,6 @@ myagent: `<button class="actn-btn primary" onclick="qs('follow up question')">Ac
 
 ---
 
-## 📸 What to show recruiters
-
-- **`js/config.js`** — shows prompt engineering skill (10 detailed system prompts)
-- **`js/api.js`** — shows API integration (streaming SSE, abort controller, rate limiting)
-- **`js/storage.js`** — shows production thinking (quota guard, schema migration, profile)
-- **`js/app.js`** — shows JS depth (DOM manipulation, async/await, state management)
-- **`css/variables.css`** — shows CSS architecture (design token system)
-
----
-
-## 📝 Resume Bullet Points
-
-> *"Built a production-grade AI agent platform using the Anthropic Claude API — features include real-time streaming responses via Server-Sent Events, 10 specialized AI agents with custom system prompts, voice input, multimodal image analysis, localStorage persistence with quota guard and schema migration, and a modular 4-file JavaScript architecture."*
-
----
-
 ## 🤝 Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new agents, run tests, and submit changes.
