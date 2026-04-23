@@ -92,6 +92,19 @@ User Input → UI (Vanilla JS)
 - Web Speech API  
 
 ---
+## 📫 Connect With Me  
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/vedant-kadiya-55196127a">
+    <img src="https://skillicons.dev/icons?i=linkedin" height="40"/>
+  </a>
+  &nbsp;&nbsp;
+  <a href="mailto:vedantkadiya24@gmail.com">
+    <img src="https://skillicons.dev/icons?i=gmail" height="40"/>
+  </a>
+</p>
+
+---
 
 ## ⚙️ Setup  
 
@@ -121,8 +134,4 @@ Focused on real student use-case
 
 Vedant Kadiya
 💻 Python Developer | 🤖 AI/ML Enthusiast
-## 📫 Connect  
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Vedant%20Kadiya-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/vedant-kadiya-55196127a)
-
-[![Email](https://img.shields.io/badge/Email-vedantkadiya@gmail.com-red?style=for-the-badge&logo=gmail)](mailto:vedantkadiya@gmail.com)
